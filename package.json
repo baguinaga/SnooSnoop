@@ -1,7 +1,7 @@
 {
   "name": "snoosnoop",
-  "version": "1.0.0",
-  "description": "A web crawler for sub-reddits",
+  "version": "0.1.0",
+  "description": "A web crawler for old.reddit.com",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
