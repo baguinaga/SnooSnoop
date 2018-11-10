@@ -6,11 +6,12 @@ $.getJSON("/api/r/all", function(data) {
     const post_button = $("<button>");
     const post_collapse = $("<form>");
     const post_edit = $("<div>");
-    const p_textarea = $("<textarea>");
+    const p_note_title = $("<input>");
+    const p_note_body = $("<textarea>");
     const p_submit = $("<button>");
     const p_delete = $("<button>");
 
-    post_div.addClass("row");
+    post_div.addClass("row justify-content-center");
 
     post_title.addClass("col-11").text(`${post.title}`);
 
@@ -23,40 +24,46 @@ $.getJSON("/api/r/all", function(data) {
         type: "button",
         "data-toggle": "collapse",
         "data-target": `#collapse-${post._id}`,
-        "aria-expanded": false,
+        "aria-expanded": "false",
         "aria-controls": `collapse-${post._id}`
       });
 
     post_collapse
-      .addClass("col-12 collapse")
+      .addClass("col-7 collapse card")
       .attr("id", `collapse-${post._id}`)
       .append(post_edit);
 
     post_edit
-      .addClass("card card-body")
-      .append(p_textarea)
+      .addClass("row justify-content-end card-body")
+      .append(p_note_title)
+      .append(p_note_body)
       .append(p_delete)
       .append(p_submit);
 
-    p_textarea.addClass("form-control").attr({
+    p_note_title.addClass("form-control").attr({
+      type: "text",
+      placeholder: "Note Title"
+    });
+
+    p_note_body.addClass("form-control").attr({
       id: `ta-${post._id}`,
       rows: "4",
       placeholder: "Notes"
     });
 
     p_submit
-      .addClass("col-2 btn btn-outline-success btn-submit")
+      .addClass("btn btn-outline-success btn-submit")
       .html(`<i class="far fa-save"></i> Save`)
       .attr({
-        "type": "button",
+        type: "button",
         "data-id": `${post._id}`
-      });     
+      });
 
     p_delete
-      .addClass("col-2 btn btn-outline-danger btn-delete")
+      .addClass("btn btn-outline-danger btn-delete")
       .html(`<i class="fas fa-trash"></i> Delete`)
       .attr({
-        "type": "button",
+        type: "button",
         "data-id": `${post._id}`
       });
 
@@ -72,3 +79,7 @@ $.getJSON("/api/r/all", function(data) {
 $.document.on("click", ".btn-submit", () => {
   const db_note_id = $(this).attr("data-id");
 });
+
+{
+  /* <input class="form-control" type="text" placeholder="Default input"></input> */
+}
