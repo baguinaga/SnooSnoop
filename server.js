@@ -5,12 +5,12 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 // Express and db
-const PORT = process.env.PORT|| 3000;
-const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:/SnooSnoop";
 const app = express();
 const db = require("./models");
 
+// Express Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
@@ -33,8 +33,15 @@ app.get("/api/r/:subreddit", (req, res) => {
           link: link
         });
       });
-      console.log(results);
-      res.json(results);
+
+      db.Post.create(results)
+        .then(dbPosts => {
+          return res.send(dbPosts);
+        })
+        .catch(err => {
+          console.log(err);
+          return res.status(500).send(err);
+        });
     })
     .catch(error => {
       console.log(error);
@@ -47,5 +54,5 @@ app.listen(PORT, () => {
     MONGODB_URI,
     { useNewUrlParser: true }
   );
-  console.log("App is running on : http://localhost:3000");
+  console.log(`App is running on : http://localhost:${PORT}`);
 });
