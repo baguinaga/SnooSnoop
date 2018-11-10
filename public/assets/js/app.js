@@ -18,11 +18,12 @@ $.getJSON("/api/r/all", function(data) {
     post_b_div.addClass("col-1").append(post_button);
 
     post_button
-      .addClass("btn btn-primary")
+      .addClass("btn btn-primary btn-collapse")
       .html(`<i class="fab fa-reddit-alien"></i>`)
       .attr({
         type: "button",
         "data-toggle": "collapse",
+        "data-id": `${post._id}`,
         "data-target": `#collapse-${post._id}`,
         "aria-expanded": "false",
         "aria-controls": `collapse-${post._id}`
@@ -42,11 +43,12 @@ $.getJSON("/api/r/all", function(data) {
 
     p_note_title.addClass("form-control").attr({
       type: "text",
+      id: `title-${post._id}`,
       placeholder: "Note Title"
     });
 
     p_note_body.addClass("form-control").attr({
-      id: `ta-${post._id}`,
+      id: `body-${post._id}`,
       rows: "4",
       placeholder: "Notes"
     });
@@ -76,10 +78,31 @@ $.getJSON("/api/r/all", function(data) {
   });
 });
 
-$.document.on("click", ".btn-submit", () => {
-  const db_note_id = $(this).attr("data-id");
+$(document).on("click", ".btn-submit", function() {
+  const db_post_id = $(this).attr("data-id");
+  const data = {
+    title: $(`#title-${db_post_id}`).val(),
+    body: $(`#body-${db_post_id}`).val()
+  };
+
+  $.post(`/api/posts/${db_post_id}`, data)
+    .then(data => {
+    console.log(data);
+    $(`#collapse-${db_post_id}`)
+      .each(function() {
+        this.reset();
+      })
+      .collapse("toggle");
+  });
 });
 
-{
-  /* <input class="form-control" type="text" placeholder="Default input"></input> */
-}
+$(document).on("click", ".btn-collapse", function() {
+  const db_post_id = $(this).attr("data-id");
+  $.get(`/api/posts/${db_post_id}`, data => {
+    console.log(data);
+    if (data.note) {
+      $(`#title-${db_post_id}`).val(data.note.title);
+      $(`#body-${db_post_id}`).val(data.note.body);
+    }
+  });
+});

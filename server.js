@@ -35,8 +35,8 @@ app.get("/api/r/:subreddit", (req, res) => {
       });
 
       db.Post.create(results)
-        .then(dbPosts => {
-          return res.send(dbPosts);
+        .then(dbPost => {
+          return res.json(dbPost);
         })
         .catch(err => {
           console.log(err);
@@ -46,6 +46,37 @@ app.get("/api/r/:subreddit", (req, res) => {
     .catch(error => {
       console.log(error);
       res.status(500).send(error);
+    });
+});
+
+app.get("/api/posts/:id", (req, res) => {
+  db.Post.findOne({ _id: req.params.id })
+    .populate("note")
+    .then(dbPost => {
+      return res.json(dbPost);
+    })
+    .catch(err => {
+      console.log(err);
+      return res.statusCode(500).send(err);
+    });
+});
+
+app.post("/api/posts/:id", (req, res) => {
+  console.log(req.body);
+  db.Note.create(req.body)
+    .then(dbNote => {
+      return db.Post.findOneAndUpdate(
+        { _id: req.params.id },
+        { note: dbNote._id },
+        { new: true }
+      );
+    })
+    .then(dbPost => {
+      return res.json(dbPost);
+    })
+    .catch(err => {
+      console.log(err);
+      return res.statusCode(500).send(err);
     });
 });
 
