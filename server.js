@@ -5,7 +5,9 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 // Express and db
-const PORT = 3000;
+const PORT = process.env.PORT|| 3000;
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 const app = express();
 const db = require("./models");
 
@@ -13,9 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-app.get("/api/r/:id", (req, res) => {
+app.get("/api/r/:subreddit", (req, res) => {
   axios
-    .get(`https://old.reddit.com/r/${req.params.id}/`)
+    .get(`https://old.reddit.com/r/${req.params.subreddit}/`)
     .then(response => {
       const $ = cheerio.load(response.data);
       const results = [];
@@ -25,10 +27,10 @@ app.get("/api/r/:id", (req, res) => {
         const link = $(element)
           .children()
           .attr("href");
-        
+
         results.push({
           title: title,
-          link : link
+          link: link
         });
       });
       console.log(results);
@@ -41,9 +43,9 @@ app.get("/api/r/:id", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  // mongoose.connect(
-  //   "mongodb://localhost/Job-Scraper",
-  //   { useNewUrlParser: true }
-  // );
+  mongoose.connect(
+    MONGODB_URI,
+    { useNewUrlParser: true }
+  );
   console.log("App is running on : http://localhost:3000");
 });
