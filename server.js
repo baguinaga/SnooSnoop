@@ -1,6 +1,7 @@
 // Dependencies
 const express = require("express");
 const mongoose = require("mongoose");
+const findOrCreate = require("mongoose-findorcreate");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
@@ -20,21 +21,26 @@ app.get("/api/r/:subreddit", (req, res) => {
     .get(`https://old.reddit.com/r/${req.params.subreddit}/`)
     .then(response => {
       const $ = cheerio.load(response.data);
-      const results = [];
 
-      $("p.title").each((i, element) => {
+      $("p.title").each(function(i, element) {
         const title = $(element).text();
         const link = $(element)
           .children()
           .attr("href");
 
-        results.push({
+        const post_elements = {
           title: title,
           link: link
+        };
+
+        db.Post.findOrCreate({ title: title }, post_elements, (err, result) => {
+          if (err) throw err;
         });
       });
-
-      db.Post.create(results)
+    })
+    .then(() => {
+      db.Post.find()
+        .limit(25)
         .then(dbPost => {
           return res.json(dbPost);
         })
@@ -43,9 +49,9 @@ app.get("/api/r/:subreddit", (req, res) => {
           return res.status(500).send(err);
         });
     })
-    .catch(error => {
-      console.log(error);
-      res.status(500).send(error);
+    .catch(err => {
+      console.log(err);
+      return res.status(500).send(err);
     });
 });
 
@@ -62,7 +68,6 @@ app.get("/api/posts/:id", (req, res) => {
 });
 
 app.post("/api/posts/:id", (req, res) => {
-  console.log(req.body);
   db.Note.create(req.body)
     .then(dbNote => {
       return db.Post.findOneAndUpdate(

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const findOrCreate = require("mongoose-findorcreate");
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
@@ -16,5 +17,6 @@ const PostSchema = new Schema({
   }
 });
 
+PostSchema.plugin(findOrCreate);
 const Post = mongoose.model("Post", PostSchema);
 module.exports = Post;
