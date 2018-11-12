@@ -11,11 +11,11 @@ $.getJSON("/api/r/all", function(data) {
     const p_submit = $("<button>");
     const p_delete = $("<button>");
 
-    post_div.addClass("row justify-content-center");
+    post_div.addClass("row px-4 justify-content-center");
 
-    post_title.addClass("col-11").text(`${post.title}`);
+    post_title.addClass("col-11 post_title").text(`${post.title}`);
 
-    post_b_div.addClass("col-1").append(post_button);
+    post_b_div.addClass("col-1 d-flex align-items-center").append(post_button);
 
     post_button
       .addClass("btn btn-primary btn-collapse")
@@ -30,7 +30,7 @@ $.getJSON("/api/r/all", function(data) {
       });
 
     post_collapse
-      .addClass("col-7 collapse card")
+      .addClass("col-6 collapse card")
       .attr("id", `collapse-${post._id}`)
       .append(post_edit);
 
@@ -44,13 +44,13 @@ $.getJSON("/api/r/all", function(data) {
     p_note_title.addClass("form-control").attr({
       type: "text",
       id: `title-${post._id}`,
-      placeholder: "Note Title"
+      placeholder: "Title"
     });
 
-    p_note_body.addClass("form-control").attr({
+    p_note_body.addClass("form-control my-2").attr({
       id: `body-${post._id}`,
       rows: "4",
-      placeholder: "Notes"
+      placeholder: "Note Text"
     });
 
     p_submit
@@ -58,15 +58,17 @@ $.getJSON("/api/r/all", function(data) {
       .html(`<i class="far fa-save"></i> Save`)
       .attr({
         type: "button",
-        "data-id": `${post._id}`
+        "data-id": `${post._id}`,
+        "data-role": "submit"
       });
 
     p_delete
-      .addClass("btn btn-outline-danger btn-delete")
+      .addClass("btn btn-outline-danger btn-submit")
       .html(`<i class="fas fa-trash"></i> Delete`)
       .attr({
         type: "button",
-        "data-id": `${post._id}`
+        "data-id": `${post._id}`,
+        "data-role": "delete"
       });
 
     post_div
@@ -80,13 +82,19 @@ $.getJSON("/api/r/all", function(data) {
 
 $(document).on("click", ".btn-submit", function() {
   const db_post_id = $(this).attr("data-id");
-  const data = {
-    title: $(`#title-${db_post_id}`).val(),
-    body: $(`#body-${db_post_id}`).val()
-  };
 
-  $.post(`/api/posts/${db_post_id}`, data)
-    .then(data => {
+  const data =
+    $(this).attr("data-role") === "submit"
+      ? {
+          title: $(`#title-${db_post_id}`).val(),
+          body: $(`#body-${db_post_id}`).val()
+        }
+      : {
+          title: "",
+          body: ""
+        };
+
+  $.post(`/api/posts/${db_post_id}`, data).then(data => {
     console.log(data);
     $(`#collapse-${db_post_id}`)
       .each(function() {
@@ -105,4 +113,9 @@ $(document).on("click", ".btn-collapse", function() {
       $(`#body-${db_post_id}`).val(data.note.body);
     }
   });
+});
+
+$("#sr_search").on("click", function(event) {
+  event.preventdefault();
+  console.log("working");
 });

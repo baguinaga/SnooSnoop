@@ -12,13 +12,14 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
     />
+    <link rel="stylesheet" href="assets/css/style.css"/>
     <title>SnooSnoop</title>
   </head>
   <body>
     <div class="container-fluid">
-      <div class="d-flex row justify-content-center">
+      <div class="d-flex row justify-content-center my-2">
+        <div class="col-12"><h1 class="hero_title text-center">SnooSnoop</h1></div>
         <form class="col-8">
-          <label for="subreddit_url">Search:</label>
           <div class="input-group input-group-lg my-2">
             <div class="input-group-prepend">
               <span class="input-group-text">https://old.reddit.com/r/</span>
@@ -30,7 +31,7 @@
               aria-describedby="subreddit_url"
             />
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button">
+              <button class="btn btn-outline-secondary" type="button" id="sr_search">
                 <i class="fas fa-search"></i>
               </button>
             </div>

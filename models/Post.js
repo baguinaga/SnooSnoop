@@ -11,6 +11,10 @@ const PostSchema = new Schema({
     type: String,
     required : true
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
   note : {
     type : Schema.Types.ObjectId,
     ref : "Note"

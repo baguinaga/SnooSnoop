@@ -40,6 +40,7 @@ app.get("/api/r/:subreddit", (req, res) => {
     })
     .then(() => {
       db.Post.find()
+        .sort({date: 1})
         .limit(25)
         .then(dbPost => {
           return res.json(dbPost);
