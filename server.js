@@ -1,7 +1,6 @@
 // Dependencies
 const express = require("express");
 const mongoose = require("mongoose");
-const findOrCreate = require("mongoose-findorcreate");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
@@ -28,27 +27,41 @@ app.get("/api/r/:subreddit", (req, res) => {
           .children()
           .attr("href");
 
-        const post_elements = {
+        const post_element = {
           title: title,
-          link: link
+          link: link,
+          subreddit: req.params.subreddit
         };
 
-        db.Post.findOrCreate({ title: title }, post_elements, (err, result) => {
-          if (err) throw err;
-        });
+        console.log(post_element);
+
+        db.Post.findOneAndUpdate(
+          { title: title },
+          { $set: post_element },
+          { new: true, upsert: true },
+          function(err, dbPost) {
+            if (err) {
+              return res.json(dbPost);
+            } else {
+              console.log(dbPost);
+            }
+          }
+        );
       });
+      res.send("Retrieved new posts");
     })
-    .then(() => {
-      db.Post.find()
-        .sort({date: 1})
-        .limit(25)
-        .then(dbPost => {
-          return res.json(dbPost);
-        })
-        .catch(err => {
-          console.log(err);
-          return res.status(500).send(err);
-        });
+    .catch(err => {
+      console.log(err);
+      return res.status(500).send(err);
+    });
+});
+
+app.get("/api/posts/r/:subreddit", (req, res) => {
+  db.Post.find({ subreddit: req.params.subreddit })
+    .sort({ date: -1 })
+    .limit(25)
+    .then(dbPost => {
+      return res.json(dbPost);
     })
     .catch(err => {
       console.log(err);

@@ -1,4 +1,4 @@
-$.getJSON("/api/r/all", function(data) {
+$.getJSON("/api/posts/r/all", function(data) {
   data.forEach(post => {
     const post_div = $("<div>");
     const post_title = $("<h4>");
@@ -80,7 +80,9 @@ $.getJSON("/api/r/all", function(data) {
   });
 });
 
-$(document).on("click", ".btn-submit", function() {
+$(document).on("click", ".btn-submit", function(event) {
+  event.preventDefault();
+
   const db_post_id = $(this).attr("data-id");
 
   const data =
@@ -104,7 +106,9 @@ $(document).on("click", ".btn-submit", function() {
   });
 });
 
-$(document).on("click", ".btn-collapse", function() {
+$(document).on("click", ".btn-collapse", function(event) {
+  event.preventDefault();
+
   const db_post_id = $(this).attr("data-id");
   $.get(`/api/posts/${db_post_id}`, data => {
     console.log(data);
@@ -115,7 +119,16 @@ $(document).on("click", ".btn-collapse", function() {
   });
 });
 
-$("#sr_search").on("click", function(event) {
-  event.preventdefault();
-  console.log("working");
+$("#sr_search").on("submit", function(event) {
+  event.preventDefault();
+
+  const subreddit = $("#subreddit_url").val();
+
+  $.getJSON(`/api/r/${subreddit}`, function(data) {
+    console.log(data);
+  });
+
+  $("#sr_search").each(() => {
+    this.reset();
+  });
 });

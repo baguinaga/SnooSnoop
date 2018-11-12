@@ -1,26 +1,28 @@
 const mongoose = require("mongoose");
-const findOrCreate = require("mongoose-findorcreate");
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
   title: {
-    type : String,
-    required : true
+    type: String,
+    required: true
   },
   link: {
     type: String,
-    required : true
+    required: true
+  },
+  subreddit: {
+    type: String,
+    required: true
   },
   date: {
     type: Date,
     default: Date.now
   },
-  note : {
-    type : Schema.Types.ObjectId,
-    ref : "Note"
+  note: {
+    type: Schema.Types.ObjectId,
+    ref: "Note"
   }
 });
 
-PostSchema.plugin(findOrCreate);
 const Post = mongoose.model("Post", PostSchema);
 module.exports = Post;
