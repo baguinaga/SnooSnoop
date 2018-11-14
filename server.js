@@ -58,7 +58,7 @@ app.get("/api/r/:subreddit", (req, res) => {
 
 app.get("/api/posts/r/:subreddit", (req, res) => {
   db.Post.find({ subreddit: req.params.subreddit })
-    .sort({ date: -1 })
+    .sort({ date: 1 })
     .limit(25)
     .then(dbPost => {
       return res.json(dbPost);
